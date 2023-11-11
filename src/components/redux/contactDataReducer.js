@@ -1,6 +1,9 @@
-
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { requestContacts, addContact, deleteContact } from 'components/services/api';
+import {
+  deleteContact,
+  requestRegister,
+  requestLogin,
+} from 'components/services/api';
 
 const INITIAL_STATE = {
   contacts: {
@@ -11,32 +14,41 @@ const INITIAL_STATE = {
   filter: '',
 };
 
-export const fetchContacts = createAsyncThunk('contacts/fetchAll', async (_, thunkAPI) => {
-  try {
-    const contacts = await requestContacts();
-    return contacts;
-  } catch (error) {
-    return thunkAPI.rejectWithValue(error.message);
+export const loginThunk = createAsyncThunk(
+  'auth/login',
+  async (formData, thunkAPI) => {
+    try {
+      const response = await requestLogin(formData);
+      return response;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
   }
-});
+);
 
-export const addContactAsync = createAsyncThunk('contacts/addContact', async (newContact, thunkAPI) => {
-  try {
-    const data = await addContact(newContact);
-    return data;
-  } catch (error) {
-    return thunkAPI.rejectWithValue(error.message);
+export const registerThunk = createAsyncThunk(
+  'auth/register',
+  async (formData, thunkAPI) => {
+    try {
+      const data = await requestRegister(formData);
+      return data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
   }
-});
+);
 
-export const deleteContactAsync = createAsyncThunk('contacts/deleteContact', async (contactId, thunkAPI) => {
-  try {
-    const data = await deleteContact(contactId);
-    return { id: contactId, data };
-  } catch (error) {
-    return thunkAPI.rejectWithValue(error.message);
+export const deleteContactAsync = createAsyncThunk(
+  'contacts/deleteContact',
+  async (contactId, thunkAPI) => {
+    try {
+      const data = await deleteContact(contactId);
+      return { id: contactId, data };
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
   }
-});
+);
 
 export const contactDataSlice = createSlice({
   name: 'contacts',
@@ -46,9 +58,9 @@ export const contactDataSlice = createSlice({
       state.filter = action.payload;
     },
   },
-  extraReducers: (builder) => {
+  extraReducers: builder => {
     builder
-      .addCase(fetchContacts.pending, (state) => {
+      .addCase(fetchContacts.pending, state => {
         state.contacts.isLoading = true;
         state.contacts.error = null;
       })
@@ -64,11 +76,12 @@ export const contactDataSlice = createSlice({
         state.contacts.items = [...state.contacts.items, action.payload];
       })
       .addCase(deleteContactAsync.fulfilled, (state, action) => {
-        state.contacts.items = state.contacts.items.filter((contact) => contact.id !== action.payload.id);
+        state.contacts.items = state.contacts.items.filter(
+          contact => contact.id !== action.payload.id
+        );
       });
   },
 });
-
 
 export const { setContacts, setFilter } = contactDataSlice.actions;
 
