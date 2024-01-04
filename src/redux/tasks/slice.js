@@ -6,7 +6,14 @@ import {
   deleteContactAsync,
 } from './operations';
 
-const handlePending = state => {
+const initialState = {
+  items: [],
+  isLoading: false,
+  error: null,
+  filter: '',
+};
+
+const handlePending = (state) => {
   state.isLoading = true;
 };
 
@@ -17,39 +24,41 @@ const handleRejected = (state, action) => {
 
 const contactDataSlice = createSlice({
   name: 'contacts',
-  contacts: {
-    items: [],
-    isLoading: false,
-    error: null,
-    filter: '',
+  initialState,
+  reducers: {
+    setFilter(state, action) {
+      state.filter = action.payload;
+    },
   },
-  extraReducers: {
-    [fetchContacts.pending]: handlePending,
-    [addContactAsync.pending]: handlePending,
-    [deleteContactAsync.pending]: handlePending,
-    [fetchContacts.rejected]: handleRejected,
-    [addContactAsync.rejected]: handleRejected,
-    [deleteContactAsync.rejected]: handleRejected,
-    [fetchContacts.fulfilled](state, action) {
-      state.isLoading = false;
-      state.error = null;
-      state.items = action.payload;
-    },
-    [addContactAsync.fulfilled](state, action) {
-      state.items = [...state.items, action.payload];
-      state.contacts.isLoading = false;
-    },
-    [deleteContactAsync.fulfilled](state, action) {
-      state.items = state.items.filter(
-        contact => contact.id !== action.payload.id
-      );
-    },
-    [logOut.fulfilled](state) {
-      state.items = [];
-      state.error = null;
-      state.isLoading = false;
-    },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchContacts.pending, handlePending)
+      .addCase(addContactAsync.pending, handlePending)
+      .addCase(deleteContactAsync.pending, handlePending)
+      .addCase(fetchContacts.rejected, handleRejected)
+      .addCase(addContactAsync.rejected, handleRejected)
+      .addCase(deleteContactAsync.rejected, handleRejected)
+      .addCase(fetchContacts.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.error = null;
+        state.items = action.payload;
+      })
+      .addCase(addContactAsync.fulfilled, (state, action) => {
+        state.items = [...state.items, action.payload];
+        state.isLoading = false;
+      })
+      .addCase(deleteContactAsync.fulfilled, (state, action) => {
+        state.items = state.items.filter(
+          (contact) => contact.id !== action.payload.id
+        );
+      })
+      .addCase(logOut.fulfilled, (state) => {
+        state.items = [];
+        state.error = null;
+        state.isLoading = false;
+      });
   },
 });
 
+export const { setFilter } = contactDataSlice.actions;
 export const contactsDataReducer = contactDataSlice.reducer;

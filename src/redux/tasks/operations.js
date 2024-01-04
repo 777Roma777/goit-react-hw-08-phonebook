@@ -5,6 +5,7 @@ import {
   deleteContact,
 } from 'components/services/api';
 
+
 export const fetchContacts = createAsyncThunk(
   'contacts/fetchAll',
   async (_, thunkAPI) => {

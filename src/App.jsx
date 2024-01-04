@@ -2,14 +2,14 @@ import { useEffect, lazy } from 'react';
 import { useDispatch } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
 import { Layout } from 'components/Layout';
-import { PrivateRoute } from './PrivateRoute';
-import { RestrictedRoute } from './RestrictedRoute';
+import { PrivateRoute } from 'components/PrivateRoute';
+import { RestrictedRoute } from 'components/RestrictedRoute';
 import { refreshUser } from 'redux/auth/operations';
 import { useAuth } from 'hooks';
 
 const HomePage = lazy(() => import('./pages/Home'));
 const ContactsPage = lazy(() => import('./pages/ContactsPage'));
-const RegistrationPage = lazy(() => import('./pages/RegistrationPage'));
+const RegisterPage = lazy(() => import('./pages/RegisterPage'));
 const LoginPage = lazy(() => import('./pages/LoginPage'));
 
 export const App = () => {
@@ -29,10 +29,7 @@ export const App = () => {
         <Route
           path="/register"
           element={
-            <RestrictedRoute
-              redirectTo="/contacts"
-              component={RegistrationPage}
-            />
+            <RestrictedRoute redirectTo="/contacts" component={RegisterPage} />
           }
         />
         <Route

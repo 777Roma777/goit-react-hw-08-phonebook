@@ -1,4 +1,3 @@
-import { StyledLink } from 'components/AuthNav/AuthNav.styled';
 import { useAuth } from 'hooks/useAuth';
 import { StyledLink } from 'app.styled';
 

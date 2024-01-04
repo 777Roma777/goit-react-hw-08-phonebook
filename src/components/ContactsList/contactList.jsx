@@ -1,16 +1,13 @@
 import React, { useEffect } from 'react';
 import css from './contactList.module.css';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  fetchContacts,
-  deleteContactAsync,
-} from 'components/redux/contactDataReducer';
+import { fetchContacts, deleteContactAsync } from 'redux/tasks/operations';
 import Loader from 'components/Loader/loader';
 import {
   selectError,
   selectIsLoading,
   selectVisibleContacts,
-} from 'components/redux/products.selectors';
+} from 'redux/tasks/selectors';
 import { ErrorMessage } from 'components/Error/errorMessage';
 
 const ContactsList = () => {
